@@ -11,22 +11,82 @@ class AiRequestTemplates {
 
     get dalle() {
         return {
-            getProfessional: (subject, word) => `Professional photo of ${subject} "${word}". High-resolution, studio quality, good lighting.`,
-            getCreative: (subject, word) => `Creative conceptual ${subject} ${word} photograph, artistic composition, unique angle`,
-            getIcon: (subject, word) => `${subject} ${word} icon, minimal design, nocrop, solid background`,
-            getAbstract: (subject, word) => `Abstract ${subject} creative ${word} representation, artistic, unique depiction`,
-            getCloseUp: (subject, word) => `Close-up, detailed ${subject} ${word}, high-focus, high-resolution 8k, bokeh, centered middle`,
-            getCandid: (subject, word) => `Wide-angle candid photo of real ${subject} ${word}`,
-            getWebDesign: (subject, word) => `Design a professional ui/ux web design for ${subject} ${word}`
+            professional: (subject, word) => `Professional photo of ${subject} "${word}". High-resolution, studio quality, good lighting.`,
+            creative: (subject, word) => `Creative conceptual ${subject} ${word} photograph, artistic composition, unique angle`,
+            icon: (subject, word) => `${subject} ${word} icon, minimal design, nocrop, solid background`,
+            abstract: (subject, word) => `Abstract ${subject} creative ${word} representation, artistic, unique depiction`,
+            close_up: (subject, word) => `Close-up, detailed ${subject} ${word}, high-focus, high-resolution 8k, bokeh, centered middle`,
+            candid: (subject, word) => `Wide-angle candid photo of real ${subject} ${word}`,
+            web_design: (subject, word) => `Design a professional ui/ux web design for ${subject} ${word}`
+        };
+    }
+
+    get keys() {
+        return [
+            'form_fields',
+            'businesses_ideas',
+            'description',
+            'definition',
+            'image_prompt',
+            'related_words',
+            'examples',
+            'synonyms',
+            'how_to',
+             'types'
+        ]
+    }
+
+    get dalle_keys() {
+        return [
+            'professional',
+            'creative',
+            'icon',
+            'abstract',
+            'close_up',
+            'candid',
+            'examples',
+            'web_design'
+        ]
+    }
+
+    get types() {
+        return {
+            message: (subject, word) => `Generate an array of ${this.aiRequestListLimit} types of ${subject} ${word}. For example types of "singers" could be wedding sings, opera singer, etc.`,
+            functionName: "get_types",
+            properties: (subject, word) => ({
+                "types": {
+                    "type": "array",
+                    "description": `Array of types of: ${subject} ${word}`,
+                    "items": {
+                        "type": "string",
+                        "description": `types of "${subject} ${word}"`
+                    }
+                }
+            }),
+            key: 'types'
+        };
+    }
+
+    get how_to() {
+        return {
+            message: (subject, word) => `Write a 50 to 75 word how to guide about  how to: ${subject} ${word}.`,
+            functionName: "get_how_to",
+            properties: (subject, word) => ({
+                "how_to": {
+                    "type": "string",
+                    "description": `50 to 75 word informative guide how to ${subject} ${word}`
+                }
+            }),
+            key: 'how_to'
         };
     }
 
     get form_fields() {
         return {
-            message: (subject, word) => `Generate an array of online form fields for ${subject} ${word}.`,
+            message: (subject, word) => `Generate an array of ${this.aiRequestListLimit} online form fields for ${subject} ${word}.`,
             functionName: "get_form_fields",
             properties: (subject, word) => ({
-                "get_form_fields": {
+                "form_fields": {
                     "type": "array",
                     "description": `Array of online form fields for: ${subject} ${word}`,
                     "items": {
@@ -35,7 +95,7 @@ class AiRequestTemplates {
                     }
                 }
             }),
-            key: 'description'
+            key: 'form_fields'
         };
     }
 
@@ -44,7 +104,7 @@ class AiRequestTemplates {
             message: (subject, word) => `Generate an array of ${this.aiRequestListLimit} businesses for ${subject} ${word}.`,
             functionName: "get_businesses_ideas",
             properties: (subject, word) => ({
-                "get_businesses": {
+                "businesses_ideas": {
                     "type": "array",
                     "description": `Array of businesses related to: ${subject} ${word}`,
                     "items": {
@@ -53,7 +113,7 @@ class AiRequestTemplates {
                     }
                 }
             }),
-            key: 'description'
+            key: 'businesses_ideas'
         };
     }
 
@@ -95,7 +155,7 @@ class AiRequestTemplates {
                     "description": `In the context of ${subject}. Write a quality ai image generator prompt for: ${word}`
                 }
             }),
-            key: 'definition'
+            key: 'image_prompt'
         };
     }
 

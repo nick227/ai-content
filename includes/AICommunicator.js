@@ -1,12 +1,14 @@
 import { OpenAI } from 'openai';
 import DatabaseManager from './DatabaseManager.js';
 import { error } from 'console';
+import dotenv from 'dotenv';
+dotenv.config();
 
 class AICommunicator {
-    constructor(apiKey, model = 'gpt-3.5-turbo-16k', maxTokens = 15890) {
+    constructor(apiKey, model = process.env.OPENAI_MODEL, maxTokens = process.env.OPENAI_MAX_TOKENS) {
         this.openai = new OpenAI(apiKey);
         this.model = model;
-        this.maxTokens = maxTokens;
+        this.maxTokens = parseInt(maxTokens);
         this.dbManager = new DatabaseManager();
     }
 
@@ -43,9 +45,9 @@ class AICommunicator {
 
             // Save data
             await this.dbManager.saveDocument('ai_requests.db', {options, res});
-            await this.dbManager.saveDocument('wordmaps.db', payload);
+            const wordmapResults = await this.dbManager.saveDocument('wordmaps.db', payload);
 
-            return results;
+            return wordmapResults;
 
         } catch (error) {
             console.error('Error querying OpenAI:', error);
