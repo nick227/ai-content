@@ -65,8 +65,8 @@ class AiContentGenerator {
         for (const word of words) {
             const prompt = fn(subject, word);
             const imageName = await this.imageProcessor.generateImageAndSaveFile(subject, word, prompt);
-            await this.dbManager.saveDocument('images.db', { prompt, imageName });
-            await this.dbManager.saveDocument('wordmaps.db', { subject, word, imageName });
+            await this.dbManager.saveDocument('images.db', { prompt, image: imageName });
+            await this.dbManager.saveDocument('wordmaps.db', { subject, word, image: imageName });
             imagesResults.push(imageName);
             await this.delayExecution(this.delay);
         }

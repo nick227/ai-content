@@ -5,7 +5,7 @@ class DataManager {
         this.apiInfo = [
             { path: '/api/chat/keys', title: 'Create Lists', elmType: 'checkbox', key: 'lists', target: '#chatgpt-options' },
             { path: '/api/dalle/keys', title: 'Dalle Prompts', elmType: 'checkbox', key: 'images', target: '#dalle-options' },
-            { path: '/api/wordmaps', title: 'Word Maps', elmType: 'ul', key: 'wordmaps', target: '#lists' }
+            { path: '/api/wordmaps', title: '', elmType: 'ul', key: 'wordmaps', target: '#lists' }
         ];
     }
 

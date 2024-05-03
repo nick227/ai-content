@@ -22,14 +22,20 @@ class DatabaseManager {
         this.processing = true;
         const { collection, document } = this.queue.shift();
         const db = new DB(`${collection}`);
-
+        console.log('---------------------------')
+        console.log('!!! saveDocument: ', collection);
         try {
             const existingDoc = await db.findOne({ subject: document.subject, word: document.word });
             if (existingDoc) {
+                console.log('existingDoc', document.subject, document.word)
                 const updatedDoc = this.mergeProperties(existingDoc, document);
+                console.log(updatedDoc);
+
                 await db.replace({ _id: existingDoc._id }, updatedDoc);
-                db.persistence.compactDatafile();
+                //db.persistence.compactDatafile();
             } else {
+                console.log('insert')
+                console.log(document)
                 await db.insert(document);
             }
         } catch (err) {
@@ -37,26 +43,29 @@ class DatabaseManager {
         } finally {
             this.processQueue();
         }
+        console.log('---------------------------')
     }
 
     mergeProperties(existingDoc, newDoc) {
         return Object.keys(newDoc).reduce((mergedDoc, key) => {
-            const oldValue = existingDoc[key];
-            const newValue = newDoc[key];
+            let oldValue = existingDoc[key];
+            let newValue = newDoc[key];
 
-            if (Array.isArray(oldValue) && Array.isArray(newValue)) {
-                // Merge arrays by combining unique elements
-                const uniqueSet = new Set([...oldValue, ...newValue]);
-                mergedDoc[key] = Array.from(uniqueSet);
-            } else {
-                // For objects and strings, replace the old value with the new value
-                mergedDoc[key] = newValue;
+            // If oldValue or newValue is not an array, make it an array
+            if (!Array.isArray(oldValue)) {
+                oldValue = [oldValue];
             }
+            if (!Array.isArray(newValue)) {
+                newValue = [newValue];
+            }
+
+            // Merge arrays by combining unique elements
+            const uniqueSet = new Set([...oldValue, ...newValue]);
+            mergedDoc[key] = Array.from(uniqueSet);
 
             return mergedDoc;
         }, { ...existingDoc });
     }
-
 
 
 }

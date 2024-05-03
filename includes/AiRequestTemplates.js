@@ -3,22 +3,17 @@ class AiRequestTemplates {
         this.aiRequestListLimit = limit;
     }
 
-    setLimit(limit) {
-        if (typeof limit === 'number' && limit > 0) {
-            this.aiRequestListLimit = limit;
-        }
-    }
-
-    get dalle() {
-        return {
-            professional: (subject, word) => `Professional photo of ${subject} "${word}". High-resolution, studio quality, good lighting.`,
-            creative: (subject, word) => `Creative conceptual ${subject} ${word} photograph, artistic composition, unique angle`,
-            icon: (subject, word) => `${subject} ${word} icon, minimal design, nocrop, solid background`,
-            abstract: (subject, word) => `Abstract ${subject} creative ${word} representation, artistic, unique depiction`,
-            close_up: (subject, word) => `Close-up, detailed ${subject} ${word}, high-focus, high-resolution 8k, bokeh, centered middle`,
-            candid: (subject, word) => `Wide-angle candid photo of real ${subject} ${word}`,
-            web_design: (subject, word) => `Design a professional ui/ux web design for ${subject} ${word}`
-        };
+    get dalle_keys() {
+        return [
+            'professional',
+            'creative',
+            'icon',
+            'abstract',
+            'close_up',
+            'candid',
+            'web_design',
+            'schematic'
+        ]
     }
 
     get keys() {
@@ -36,17 +31,17 @@ class AiRequestTemplates {
         ]
     }
 
-    get dalle_keys() {
-        return [
-            'professional',
-            'creative',
-            'icon',
-            'abstract',
-            'close_up',
-            'candid',
-            'examples',
-            'web_design'
-        ]
+    get dalle() {
+        return {
+            professional: (subject, word) => `Professional photo of ${subject} "${word}". High-resolution, studio quality, good lighting.`,
+            creative: (subject, word) => `Creative conceptual ${subject} ${word} photograph, artistic composition, unique angle`,
+            icon: (subject, word) => `${subject} ${word} icon, minimal design, nocrop, solid background`,
+            abstract: (subject, word) => `Abstract ${subject} creative ${word} representation, artistic, unique depiction`,
+            close_up: (subject, word) => `Close-up, detailed ${subject} ${word}, high-focus, high-resolution 8k, bokeh, centered middle`,
+            candid: (subject, word) => `Wide-angle candid photo of real ${subject} ${word}`,
+            web_design: (subject, word) => `Design a professional ui/ux web design for ${subject} ${word}`,
+            schematic: (subject, word) => `Illustrated a clear clean detailed schematic for ${subject} ${word}`
+        };
     }
 
     get types() {
@@ -64,20 +59,6 @@ class AiRequestTemplates {
                 }
             }),
             key: 'types'
-        };
-    }
-
-    get how_to() {
-        return {
-            message: (subject, word) => `Write a 50 to 75 word how to guide about  how to: ${subject} ${word}.`,
-            functionName: "get_how_to",
-            properties: (subject, word) => ({
-                "how_to": {
-                    "type": "string",
-                    "description": `50 to 75 word informative guide how to ${subject} ${word}`
-                }
-            }),
-            key: 'how_to'
         };
     }
 
@@ -99,6 +80,20 @@ class AiRequestTemplates {
         };
     }
 
+    get how_to() {
+        return {
+            message: (subject, word) => `Write a 50 to 75 word how to guide about  how to: ${subject} ${word}.`,
+            functionName: "get_how_to",
+            properties: (subject, word) => ({
+                "how_to": {
+                    "type": "string",
+                    "description": `50 to 75 word informative guide how to ${subject} ${word}`
+                }
+            }),
+            key: 'how_to'
+        };
+    }
+
     get businesses_ideas() {
         return {
             message: (subject, word) => `Generate an array of ${this.aiRequestListLimit} businesses for ${subject} ${word}.`,
@@ -114,48 +109,6 @@ class AiRequestTemplates {
                 }
             }),
             key: 'businesses_ideas'
-        };
-    }
-
-    get description() {
-        return {
-            message: (subject, word) => `In the context of ${subject}. Generate a brief detailed descriptions of: ${word}.`,
-            functionName: "get_description",
-            properties: (subject, word) => ({
-                "description": {
-                    "type": "string",
-                    "description": `In the context of ${subject}. Brief informative description of: ${word}`
-                }
-            }),
-            key: 'description'
-        };
-    }
-
-    get definition() {
-        return {
-            message: (subject, word) => `What is the definition of ${subject} ${word}.`,
-            functionName: "get_definition",
-            properties: (subject, word) => ({
-                "definition": {
-                    "type": "string",
-                    "description": `In the context of ${subject}. Brief informative definition of: ${word}`
-                }
-            }),
-            key: 'definition'
-        };
-    }
-
-    get image_prompt() {
-        return {
-            message: (subject, word) => `Write a quality ai image generator prompt for: ${subject} ${word}.`,
-            functionName: "get_image_prompt",
-            properties: (subject, word) => ({
-                "definition": {
-                    "type": "string",
-                    "description": `In the context of ${subject}. Write a quality ai image generator prompt for: ${word}`
-                }
-            }),
-            key: 'image_prompt'
         };
     }
 
@@ -211,6 +164,54 @@ class AiRequestTemplates {
             }),
             key: 'synonyms'
         };
+    }
+
+    get description() {
+        return {
+            message: (subject, word) => `In the context of ${subject}. Generate a brief detailed descriptions of: ${word}.`,
+            functionName: "get_description",
+            properties: (subject, word) => ({
+                "description": {
+                    "type": "string",
+                    "description": `In the context of ${subject}. Brief informative description of: ${word}`
+                }
+            }),
+            key: 'description'
+        };
+    }
+
+    get definition() {
+        return {
+            message: (subject, word) => `What is the definition of ${subject} ${word}.`,
+            functionName: "get_definition",
+            properties: (subject, word) => ({
+                "definition": {
+                    "type": "string",
+                    "description": `In the context of ${subject}. Brief informative definition of: ${word}`
+                }
+            }),
+            key: 'definition'
+        };
+    }
+
+    get image_prompt() {
+        return {
+            message: (subject, word) => `Write a quality ai image generator prompt for: ${subject} ${word}.`,
+            functionName: "get_image_prompt",
+            properties: (subject, word) => ({
+                "definition": {
+                    "type": "string",
+                    "description": `In the context of ${subject}. Write a quality ai image generator prompt for: ${word}`
+                }
+            }),
+            key: 'image_prompt'
+        };
+    }
+
+    setLimit(limit) {
+        if (typeof limit === 'number' && limit > 0) {
+            this.aiRequestListLimit = limit;
+        }
     }
 }
 

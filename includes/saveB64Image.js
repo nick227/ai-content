@@ -8,11 +8,11 @@ const __dirname = path.dirname(__filename);
 async function saveB64Image(b64_json, subject, word, prompt) {
     const baseDir = path.join(process.cwd(), '/public/uploads/images/');
     const buffer = Buffer.from(b64_json, 'base64');
-    const imageName = `${makeFileNameSafeForWindows(prompt)}-${Date.now()}.jpg`;
-    const imagePath = path.join(baseDir, imageName);
+    const image = `${makeFileNameSafeForWindows(prompt)}-${Date.now()}.jpg`;
+    const imagePath = path.join(baseDir, image);
     if (!fs.existsSync(baseDir)) fs.mkdirSync(baseDir, { recursive: true });
     fs.writeFileSync(imagePath, buffer);
-    return imageName;
+    return image;
 }
 
 function makeFileNameSafeForWindows(name) {

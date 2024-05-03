@@ -1,4 +1,8 @@
 class UiComponent {
+    constructor() {
+        this.originalButtonText = '';
+    }
+
     updateContent(selector, html) {
         const element = document.querySelector(selector);
         if (element) {
@@ -16,14 +20,10 @@ class UiComponent {
 
     createElement(tag, options = {}) {
         const element = document.createElement(tag);
-        Object.keys(options).forEach(key => {
-            if (key === 'class') {
-                element.className = options[key];
-            } else if (key === 'innerHTML') {
-                element.innerHTML = options[key];
-            } else {
-                element[key] = options[key];
-            }
+        Object.entries(options).forEach(([key, value]) => {
+            if (key === 'class') element.className = value;
+            else if (key === 'innerHTML') element.innerHTML = value;
+            else element[key] = value;
         });
         return element;
     }
@@ -35,9 +35,9 @@ class UiComponent {
         }
     }
 
-    toggleProcessing(row=null) {
+    toggleProcessing(row = null) {
         document.querySelectorAll('.row').forEach(row => row.classList.remove('processing'));
-        if(row){
+        if (row) {
             row.classList.add('processing');
         }
     }
@@ -47,7 +47,8 @@ class UiComponent {
         target.classList.add('active');
         const button = document.querySelector('button[type="submit"]');
         button.disabled = true;
-
+        this.originalButtonText = button.textContent;
+        button.textContent = 'Loading...';
     }
 
     hideLoader() {
@@ -55,6 +56,7 @@ class UiComponent {
         target.classList.remove('active');
         const button = document.querySelector('button[type="submit"]');
         button.disabled = false;
+        button.textContent = this.originalButtonText;
     }
 
     removeChild(parent, child) {
@@ -68,24 +70,23 @@ class UiComponent {
         }
     }
 
-    updateContent(selector, html) {
-        const element = document.querySelector(selector);
-        if (element) {
-            element.innerHTML = html;
-        }
-    }
-
     renderContentSection(info, results) {
         const html = this.composeHtmlForContent(info, results);
-        this.updateContent(info.target, `<h2>${info.title}</h2>${html}`);
+        const title = info.title ? `<h2>${info.title}</h2>` : '';
+        this.updateContent(info.target, `${title}${html}`);
     }
 
     composeHtmlForContent(info, results) {
         if (info.elmType === 'checkbox') {
-            return results.map(result => {
+            results.sort((a, b) => {
+                const aValue = typeof a === 'object' ? (a.display || JSON.stringify(a)) : a;
+                const bValue = typeof b === 'object' ? (b.display || JSON.stringify(b)) : b;
+                return aValue.localeCompare(bValue);
+            });
+            return '<div class="row">' + results.map(result => {
                 const value = typeof result === 'object' ? JSON.stringify(result) : result;
                 return `<label for="input_${result}_${info.key}"><input class="checkbox_${info.key}" type="checkbox" id="input_${result}_${info.key}" value='${value}'>${result.display || result}</label>`;
-            }).join('');
+            }).join('') + '</div>';
         } else if (info.elmType === 'ul') {
             return `<div class="row align-top">${results.map(result => this.composeWordMapElement(result)).join('')}</div>`;
         }
@@ -97,21 +98,41 @@ class UiComponent {
     }
 
     composeWordMapElement(result) {
-        let html = '';
+    if (typeof result !== 'object') {
+        return '<div class="wordmap-container"></div>';
+    }
 
-        if (typeof result === 'object') {
-            for (let key in result) {
-                if (Array.isArray(result[key])) {
-                    html += `<h6>${key}</h6>`;
-                    html += `<ul>${result[key].map(item => `<li>${item}</li>`).join('')}</ul>`;
-                } else if (key === 'imageName') {
-                    html += `<img class="thumb" src="/uploads/images/${result[key]}" alt="uploads/images/${result[key]}">`;
-                } else if (key !== '_id' && key !== 'timestamp') {
-                    html += `<h2>${key}: <span>${result[key]}</span></h2>`;
-                }
-            }
+    const createImageElement = name => `<img title="${name}" class="thumb" src="/uploads/images/${name}" alt="uploads/images/${name}">`;
+
+    let html = '';
+    let imagesHtml = '';
+    let subjectWordHtml = '';
+
+    Object.entries(result).forEach(([key, value]) => {
+        if (key === '_id' || key === 'timestamp') {
+            return;
         }
 
-        return `<div class="wordmap-container">${html}</div>`;
-    }
+        if (key === 'subject' || key === 'word') {
+            subjectWordHtml += `<h3>${key}: <span>${value}</span></h3>`;
+            return;
+        }
+
+        if (key === 'image') {
+            imagesHtml = Array.isArray(value) ? `<div class="images-container">${value.map(createImageElement).join('')}</div>` : createImageElement(value);
+            return;
+        }
+
+        if (Array.isArray(value)) {
+            const content = `<ul>${value.map(item => `<li>${item}</li>`).join('')}</ul>`;
+            html += `<div><h6>${key}</h6>${content}</div>`;
+        } else {
+            html += `<h3>${key}: <span>${value}</span></h3>`;
+        }
+    });
+
+    subjectWordHtml = subjectWordHtml ? `<div class="header">${subjectWordHtml}</div>` : '';
+
+    return `<div class="wordmap-container">${subjectWordHtml}<div class="body">${html}${imagesHtml}</div></div>`;
+}
 }
