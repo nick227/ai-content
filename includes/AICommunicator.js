@@ -31,6 +31,7 @@ class AICommunicator {
             const res = await this.openai.chat.completions.create(options);
             const response = this.extractResponse(res, aiTemplate.key);
             const results = Array.isArray(response) ? [...new Set(response)] : [response];
+            results = results.filter(result => result != null);
 
             console.log("success");
             console.log(results);

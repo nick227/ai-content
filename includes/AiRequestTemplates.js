@@ -12,7 +12,8 @@ class AiRequestTemplates {
             'close_up',
             'candid',
             'web_design',
-            'schematic'
+            'schematic',
+            'photograph'
         ]
     }
 
@@ -40,7 +41,8 @@ class AiRequestTemplates {
             close_up: (subject, word) => `Close-up, detailed ${subject} ${word}, high-focus, high-resolution 8k, bokeh, centered middle`,
             candid: (subject, word) => `Wide-angle candid photo of real ${subject} ${word}`,
             web_design: (subject, word) => `Design a professional ui/ux web design for ${subject} ${word}`,
-            schematic: (subject, word) => `Illustrated a clear clean detailed schematic for ${subject} ${word}`
+            schematic: (subject, word) => `Illustrated a clear clean detailed schematic for ${subject} ${word}`,
+            photograph: (subject, word) => `Sharp photograph of ${subject} ${word}. Use: good lighting, dof, correct color, good composition`,
         };
     }
 
