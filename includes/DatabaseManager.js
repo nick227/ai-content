@@ -1,73 +1,69 @@
-import DB from './DB.js';
+import DB from "./DB.js";
 
 class DatabaseManager {
-    constructor() {
-        this.queue = [];
-        this.processing = false;
+  constructor() {
+    this.queue = [];
+    this.processing = false;
+  }
+
+  async saveDocument(collection, document) {
+    this.queue.push({ collection, document });
+    if (!this.processing) {
+      this.processQueue();
+    }
+  }
+
+  async processQueue() {
+    if (this.queue.length === 0) {
+      this.processing = false;
+      return;
     }
 
-    async saveDocument(collection, document) {
-        this.queue.push({ collection, document });
-        if (!this.processing) {
-            this.processQueue();
+    this.processing = true;
+    const { collection, document } = this.queue.shift();
+    const db = new DB(`${collection}`);
+    try {
+      const existingDoc = await db.findOne({
+        subject: document.subject,
+        word: document.word,
+      });
+      if (existingDoc) {
+        const updatedDoc = this.mergeProperties(existingDoc, document);
+        await db.replace({ _id: existingDoc._id }, updatedDoc);
+        //db.persistence.compactDatafile();
+      } else {
+        await db.insert(document);
+      }
+    } catch (err) {
+      console.error("Error processing document for " + collection + ": ", err);
+    } finally {
+      this.processQueue();
+    }
+  }
+
+  mergeProperties(existingDoc, newDoc) {
+    return Object.keys(newDoc).reduce(
+      (mergedDoc, key) => {
+        let oldValue = existingDoc[key];
+        let newValue = newDoc[key];
+
+        // If oldValue or newValue is not an array, make it an array
+        if (!Array.isArray(oldValue)) {
+          oldValue = [oldValue];
         }
-    }
-
-    async processQueue() {
-        if (this.queue.length === 0) {
-            this.processing = false;
-            return;
+        if (!Array.isArray(newValue)) {
+          newValue = [newValue];
         }
 
-        this.processing = true;
-        const { collection, document } = this.queue.shift();
-        const db = new DB(`${collection}`);
-        console.log('---------------------------')
-        console.log('!!! saveDocument: ', collection);
-        try {
-            const existingDoc = await db.findOne({ subject: document.subject, word: document.word });
-            if (existingDoc) {
-                console.log('existingDoc', document.subject, document.word)
-                const updatedDoc = this.mergeProperties(existingDoc, document);
-                console.log(updatedDoc);
+        // Merge arrays by combining unique elements
+        const uniqueSet = new Set([...oldValue, ...newValue]);
+        mergedDoc[key] = Array.from(uniqueSet);
 
-                await db.replace({ _id: existingDoc._id }, updatedDoc);
-                //db.persistence.compactDatafile();
-            } else {
-                console.log('insert')
-                console.log(document)
-                await db.insert(document);
-            }
-        } catch (err) {
-            console.error("Error processing document for " + collection + ": ", err);
-        } finally {
-            this.processQueue();
-        }
-        console.log('---------------------------')
-    }
-
-    mergeProperties(existingDoc, newDoc) {
-        return Object.keys(newDoc).reduce((mergedDoc, key) => {
-            let oldValue = existingDoc[key];
-            let newValue = newDoc[key];
-
-            // If oldValue or newValue is not an array, make it an array
-            if (!Array.isArray(oldValue)) {
-                oldValue = [oldValue];
-            }
-            if (!Array.isArray(newValue)) {
-                newValue = [newValue];
-            }
-
-            // Merge arrays by combining unique elements
-            const uniqueSet = new Set([...oldValue, ...newValue]);
-            mergedDoc[key] = Array.from(uniqueSet);
-
-            return mergedDoc;
-        }, { ...existingDoc });
-    }
-
-
+        return mergedDoc;
+      },
+      { ...existingDoc }
+    );
+  }
 }
 
 export default DatabaseManager;

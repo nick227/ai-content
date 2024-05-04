@@ -142,12 +142,12 @@ class AiRequestTemplates {
 
     get examples() {
         return {
-            message: (subject, word) => `In the context of ${subject}. Generate array of ${this.aiRequestListLimit} well-known examples of a: ${word}.`,
+            message: (subject, word) => `Generate array of ${this.aiRequestListLimit} well-known examples of  ${subject} ${word}.`,
             functionName: "get_examples",
             properties: (subject, word) => ({
                 "examples": {
                     "type": "array",
-                    "description": `In the context of ${subject}. ${this.aiRequestListLimit} popular examples of a: ${word}`,
+                    "description": `${this.aiRequestListLimit} popular examples of ${subject} ${word}`,
                     "items": {
                         "type": "string",
                         "description": `example of: ${subject} ${word}.`
@@ -178,12 +178,12 @@ class AiRequestTemplates {
 
     get description() {
         return {
-            message: (subject, word) => `In the context of ${subject}. Generate a brief detailed descriptions of: ${word}.`,
+            message: (subject, word) => `Generate a brief detailed descriptions of ${subject} ${word}.`,
             functionName: "get_description",
             properties: (subject, word) => ({
                 "description": {
                     "type": "string",
-                    "description": `In the context of ${subject}. Brief informative description of: ${word}`
+                    "description": `Informative description of ${subject} ${word}`
                 }
             }),
             key: 'description'
@@ -197,7 +197,7 @@ class AiRequestTemplates {
             properties: (subject, word) => ({
                 "definition": {
                     "type": "string",
-                    "description": `In the context of ${subject}. Brief informative definition of: ${word}`
+                    "description": `Informative definition of: ${subject} ${word}`
                 }
             }),
             key: 'definition'
@@ -206,12 +206,12 @@ class AiRequestTemplates {
 
     get image_prompt() {
         return {
-            message: (subject, word) => `Write a quality ai image generator prompt for: ${subject} ${word}.`,
+            message: (subject, word) => `Write a quality, visual, detailed, professional ai image generator prompt for: ${subject} ${word}.`,
             functionName: "get_image_prompt",
             properties: (subject, word) => ({
                 "definition": {
                     "type": "string",
-                    "description": `In the context of ${subject}. Write a quality ai image generator prompt for: ${word}`
+                    "description": ` Write a quality ai image generator prompt of ${subject} ${word}`
                 }
             }),
             key: 'image_prompt'
