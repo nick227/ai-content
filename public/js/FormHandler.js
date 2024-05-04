@@ -109,14 +109,53 @@ class FormHandler {
   }
 
   async makeRequest() {
+    const cancelLabel = document.querySelector(".label_cancel");
+    cancelLabel.classList.remove("hidden");
+    if (this.isCanceled()) {
+      this.handleCancellation();
+      return;
+    }
+
     const requests = this.collectData();
+    let msg = `number of ai requests: ${requests.length}`;
+    this.uiComponent.showMessage(msg);
+
     if (requests.length > 0) {
       try {
         this.uiComponent.showLoader();
         console.log('-----------------------');
         console.log('-- MAKING AI REQUEST --');
         console.log(requests);
-        await this.makeAiRequest(requests);
+        const numberOfTotalCommands = requests.reduce((acc, cur) => {
+          return acc + cur.commands.length;
+        }, 0);
+        let commandCounter = 0;
+
+        for (let i = 0; i < requests.length; i++) {
+
+          for (let j = 0; j < requests[i].commands.length; j++) {
+            if (this.isCanceled()) {
+              this.handleCancellation();
+              break;
+            }
+            const finalCommand = {
+              "limit": requests[i].limit,
+              "subject": requests[i].subject,
+              "word": requests[i].commands[j].word,
+              "commands": [requests[i].commands[j]]
+            };
+
+
+            console.log(`inner loop ${i}/${j}`, requests.length);
+            await this.makeAiRequest([finalCommand]);
+            msg = `number of ai requests: ${numberOfTotalCommands - commandCounter}`;
+            this.uiComponent.showMessage(msg);
+            await this.delayExecution(2000);
+            commandCounter++;
+
+
+          }
+        }
       } catch (error) {
         console.error("Failed to generate wordmaps:", error);
         this.uiComponent.showError(error);
@@ -124,6 +163,9 @@ class FormHandler {
         await this.dataManager.loadApiData();
         await this.autoGenerate();
         this.uiComponent.hideLoader();
+        this.uiComponent.showMessage('');
+        this.restoreCheckboxStates();
+        cancelLabel.classList.add("hidden");
       }
     } else {
       this.uiComponent.showAlert(
@@ -131,6 +173,17 @@ class FormHandler {
       );
     }
   }
+
+  isCanceled() {
+    return document.querySelector("#input_cancel:checked") !== null;
+  }
+
+  handleCancellation() {
+    this.uiComponent.showMessage('');
+    this.autoCount = 0;
+    console.log('CANCELING EARLY');
+  }
+
 
   async autoGenerate() {
     const autoGenerate = document.querySelector("#auto_generate");
@@ -143,44 +196,60 @@ class FormHandler {
       if (this.autoCount < parseInt(autoGenerateLimit)) {
         console.log(`starting auto generation ${this.autoCount}`);
         this.autoCount++;
-        this.restoreCheckboxStates();
         await this.makeRequest();
       } else {
         console.log("Auto-generation limit reached");
         this.autoCount = 0;
-        this.restoreCheckboxStates();
         return;
       }
     }
   }
-  
+
   restoreCheckboxStates() {
-      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-      checkboxes.forEach(checkbox => {
-          const value = checkbox.value;
-          const checked = this.localStorageCheckboxes[value];
-          checkbox.checked = !!checked;
-      });
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+      const value = checkbox.value;
+      const checked = this.localStorageCheckboxes[value];
+      checkbox.checked = !!checked;
+    });
   }
 
   collectData() {
     const limit = document.querySelector("#list_limit").value;
-    const csvRows = Array.from(document.querySelectorAll(".csv-rows .row"));
-    const requests = [];
-    const imageCheckboxes = [
-      ...document.querySelectorAll(".checkbox_images:checked"),
+    const commands = this.getCommands();
+    const requests = [
+      ...this.collectFromListContainers(commands, limit),
+      ...this.collectFromCSVRows(commands, limit),
+      ...this.collectFromIndividualInputs(commands, limit)
     ];
-    const listCheckboxes = [
-      ...document.querySelectorAll(".checkbox_lists:checked"),
-    ];
-    const imageCommands = imageCheckboxes.map((elm) => ({
-      type: "dalle",
-      method: elm.value,
-    }));
-    const listCommands = listCheckboxes.map((elm) => elm.value);
-    const commands = [...imageCommands, ...listCommands];
+    return requests;
+  }
 
-    csvRows.forEach((row) => {
+  getCommands() {
+    const imageCheckboxes = document.querySelectorAll(".checkbox_images:checked");
+    const listCheckboxes = document.querySelectorAll(".checkbox_lists:checked");
+    const imageCommands = Array.from(imageCheckboxes, elm => ({ type: "dalle", method: elm.value }));
+    const listCommands = Array.from(listCheckboxes, elm => elm.value);
+    return [...imageCommands, ...listCommands];
+  }
+
+  collectFromListContainers(commands, limit) {
+    const requests = [];
+    document.querySelectorAll(".list-container input[type='checkbox']:checked")
+      .forEach(selector => {
+        const parentContainer = selector.closest('.list-container');
+        const wordmapContainer = selector.closest('.wordmap-container');
+        const subject = wordmapContainer.querySelector('.header span').innerText;
+        parentContainer.querySelectorAll('ul li').forEach(item => {
+          requests.push({ subject, word: item.innerText, commands, limit });
+        });
+      });
+    return requests;
+  }
+
+  collectFromCSVRows(commands, limit) {
+    const requests = [];
+    document.querySelectorAll(".csv-rows .row").forEach(row => {
       const inputs = row.querySelectorAll("input");
       const subject = inputs[0].value;
       const word = inputs[1].value;
@@ -188,20 +257,19 @@ class FormHandler {
         requests.push({ subject, word, commands, limit });
       }
     });
-
-    const subjectInput = document.querySelector("#subject_input").value;
-    const wordInput = document.querySelector("#word_input").value;
-    if (subjectInput || wordInput) {
-      requests.push({
-        subject: subjectInput,
-        word: wordInput,
-        commands,
-        limit,
-      });
-    }
-
     return requests;
   }
+
+  collectFromIndividualInputs(commands, limit) {
+    const subjectInput = document.querySelector("#subject_input").value;
+    const wordInput = document.querySelector("#word_input").value;
+    const requests = [];
+    if (subjectInput || wordInput) {
+      requests.push({ subject: subjectInput, word: wordInput, commands, limit });
+    }
+    return requests;
+  }
+
 
   async makeAiRequest(requests) {
     for (let i = 0; i < requests.length; i++) {

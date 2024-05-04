@@ -231,6 +231,10 @@ form button {
     color: black;
 }
 
+.hidden {
+    display: none;
+}
+
 .thumb {
     width: 125px;
     height: auto;

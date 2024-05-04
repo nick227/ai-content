@@ -7,60 +7,70 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="css/main.css">
 </head>
+
 <body>
 
     <section class="form">
-<form>
-    <div class="upload-area">
-        <input type="file" id="file" />
-        <div class="icon">
-            <i class="fas fa-cloud-upload-alt"></i>
+        <form>
+            <div class="upload-area">
+                <input type="file" id="file" />
+                <div class="icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <header>Upload CSV</header>
+            </div>
+            <div class="csv-rows"></div>
+            <div class="primary-row row">
+                <input type="text" id="subject_input" placeholder="subject" />
+                <input type="text" id="word_input" placeholder="word" />
+            </div>
+
+            <div style="height:10px;"></div>
+
+            <section id="chatgpt-options"></section>
+
+            <div style="height:20px;"></div>
+
+            <div class="row">
+                <input type="number" value="25" max="100" id="list_limit" placeholder="limit"
+                    style="width: 30px; height: 15px;" />
+                <h6>limit for most lists</h6>
+            </div>
+
+            <div style="height:20px;"></div>
+
+            <section id="dalle-options"></section>
+
+            <div style="height:20px;"></div>
+
+            <div class="row">
+                <label for="auto_generate"><input type="checkbox" name="auto_generate"
+                        id="auto_generate" />auto-generate</label>
+                <input type="number" value="3" max="3" id="auto_limit" placeholder="limit"
+                    style="width: 30px; height: 15px;" />
+            </div>
+
+            <button type="submit">submit</button>
+
+        </form>
+        <div class="row" id="status"></div>
+
+        <div class="row">
+            <label class="hidden label_cancel"><input type="checkbox" name="cancel" id="input_cancel" />cancel</label>
         </div>
-        <header>Upload CSV</header>
-    </div>
-    <div class="csv-rows"></div>
-    <div class="primary-row row">
-        <input type="text" id="subject_input" placeholder="subject" />
-        <input type="text" id="word_input" placeholder="word" />
-    </div>
+    </section>
 
-    <div style="height:10px;"></div>
+    <section class="results">
 
-    <section id="chatgpt-options"></section>
-
-    <div style="height:20px;"></div>
-
-    <div class="row">
-        <input type="number" value="25" max="100" id="list_limit" placeholder="limit" style="width: 30px; height: 15px;" />
-        <h6>limit for most lists</h6>
-    </div>
-
-    <div style="height:20px;"></div>
-
-    <section id="dalle-options"></section>
-
-    <div style="height:20px;"></div>
-
-    <div class="row">
-        <label for="auto_generate"><input type="checkbox" name="auto_generate" id="auto_generate" />auto-generate</label>
-        <input type="number" value="3" max="3" id="auto_limit" placeholder="limit" style="width: 30px; height: 15px;" />
-    </div>
-    <button type="submit">submit</button>
-
-</form>
-</section>
-
-<section class="results">
-    
-    <div style="height:10px;"></div>
-    <div class="search-container">
-        <input type="text" id="search_input" placeholder="search" />
-    </div>
+        <div style="height:10px;"></div>
+        <div class="search-container">
+            <input type="text" id="search_input" placeholder="search" />
+        </div>
 
 
-    <section id="lists"></section>
+        <section id="lists"></section>
 
-</section>
+    </section>
 
     <script src="js/UiComponent.js"></script>
     <script src="js/CsvUpload.js"></script>
@@ -72,4 +82,5 @@
     <script src="js/DataManager.js"></script>
     <script src="js/app.js"></script>
 </body>
+
 </html>
