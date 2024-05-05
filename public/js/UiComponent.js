@@ -1,6 +1,17 @@
 class UiComponent {
     constructor() {
         this.originalButtonText = "";
+        this.setupListeners();
+    }
+
+    setupListeners() {
+        const link = document.querySelector(`.go_to_top`);
+        link.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior:'smooth',
+            });
+        });
     }
 
     updateContent(selector, html) {
@@ -127,17 +138,23 @@ class UiComponent {
 
         let html = "";
         let imagesHtml = "";
-        let subjectWordHtml = "";
+        let subjectWordHtml = `<p class="subject-word-container">`;
 
         Object.entries(result).forEach(([key, value]) => {
             if (key === "_id" || key === "timestamp") {
                 return;
             }
 
-            if (key === "subject" || key === "word") {
-                subjectWordHtml += `<h5>${key}: <span>${value}</span></h5>`;
+            if (key === "subject") {
+                subjectWordHtml += `${key}: <span style="">${value}</span>, `;
                 return;
             }
+
+            if (key === "word") {
+                subjectWordHtml += `${key}: <span style="">${value}</span>`;
+                return;
+            }
+            subjectWordHtml += "</p>";
 
             if (key === "image") {
                 imagesHtml = Array.isArray(value)

@@ -17,7 +17,8 @@ class AiRequestTemplates {
             'product_photography',
             'corporate_art',
             'bauhaus_art',
-            'clip_art'
+            'clip_art',
+            'ink_art'
         ]
     }
 
@@ -50,7 +51,8 @@ class AiRequestTemplates {
             product_photography: (subject, word) => `Product photography shot of ${subject} ${word}, studio-quality`,
             corporate_art: (subject, word) => `Abstract illustration of ${subject} ${word}, corporate-art, minimalist, clean, high-resolution`, 
             bauhaus_art: (subject, word) => `Bauhaus ${subject} ${word} art, atristic illustration, abstract, angular, and geometric`, 
-            clip_art: (subject, word) => `Standard clip are of ${subject} ${word}, detailed, nocrop, solid background`
+            clip_art: (subject, word) => `Standard clip are of ${subject} ${word}, detailed, nocrop, solid background`, 
+            ink_art: (subject, word) => `Ink sketch of ${subject} ${word}, detailed, nocrop, white background`
         };
     }
 

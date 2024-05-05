@@ -49,12 +49,13 @@ h6 {
     font-size: 0.875em;
 }
 
-a {
+a, .link {
     color: #0077cc;
     text-decoration: none;
+    cursor: pointer;
 }
 
-a:hover {
+a:hover, .link:hover {
     color: #005999;
 }
 
@@ -111,7 +112,7 @@ section.results {
 }
 
 .wordmap-container {
-    width: 100%;
+    width: 40%;
     min-height: 10vw;
     max-height: 30vw;
     animation: flashAndShimmer 1.325s ease-in-out forwards;
@@ -120,8 +121,7 @@ section.results {
     display:flex;
     flex-direction: column;
     overflow-y: auto;
-    margin-bottom: 60px;
-    margin-bottom: 25px;
+    margin: 0 60% 2% 0;
     padding: 1%;
     border: 1px solid gray;
     border-radius: 10px;
@@ -194,6 +194,11 @@ button:disabled {
 form button {
     width: 100%;
     margin-top: 20px;
+}
+
+.subject-word-container span {
+    font-weight: 800;
+
 }
 
 .upload-area {

@@ -141,7 +141,7 @@ class FormHandler {
             const finalCommand = {
               "limit": requests[i].limit,
               "subject": requests[i].subject,
-              "word": requests[i].commands[j].word,
+              "word": requests[i].word,
               "commands": [requests[i].commands[j]]
             };
 
@@ -253,7 +253,7 @@ class FormHandler {
       const inputs = row.querySelectorAll("input");
       const subject = inputs[0].value;
       const word = inputs[1].value;
-      if (subject || word) {
+      if (subject && word) {
         requests.push({ subject, word, commands, limit });
       }
     });
