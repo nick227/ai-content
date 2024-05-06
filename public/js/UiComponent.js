@@ -1,7 +1,8 @@
 class UiComponent {
-    constructor() {
+    constructor(domCache) {
         this.originalButtonText = "";
         this.setupListeners();
+        this.domCache = domCache;
     }
 
     setupListeners() {
@@ -9,8 +10,40 @@ class UiComponent {
         link.addEventListener('click', () => {
             window.scrollTo({
                 top: 0,
-                behavior:'smooth',
+                behavior: 'smooth',
             });
+        });
+
+        const toggleBtn = document.querySelector(`.toggle-view-btn`);
+        toggleBtn.addEventListener('click', () => {
+            this.toggleView();
+        });
+    }
+
+    toggleView() {
+        const body = document.querySelector('body');
+        const isViewList = body.classList.contains('view-list');
+        body.classList.toggle('view-table');
+        const subjectWordPairs = this.getSubjectWordPairs();
+
+        console.log('subjectWordPairs', subjectWordPairs)
+
+    }
+
+    getSubjectWordPairs() {
+        return this.domCache.searchableData.map((obj) => {
+            const lists = obj.lists.map(list => {
+                console.log(list)
+                const listName = list.parentElement.querySelector('.list-title').textContent;
+                const listItems = Array.from(list.querySelectorAll('li')).map(li => li.textContent);
+                return { listName, listItems };
+            });
+
+            return {
+                subject: obj.headers[0].text,
+                word: obj.headers[1].text,
+                lists
+            }
         });
     }
 
@@ -169,7 +202,7 @@ class UiComponent {
                 const content = `<ul>${value
                     .map((item) => `<li>${item}</li>`)
                     .join("")}</ul>`;
-                html += `<div class="list-container"><label><input name="list_selector_${result._id}_${key}" type="checkbox" data-key="${key}" value="" /><span>${key}</span></label>${content}</div>`;
+                html += `<div class="list-container"><label><input name="list_selector_${result._id}_${key}" type="checkbox" data-key="${key}" value="" /><span class="list-title">${key}</span></label>${content}</div>`;
             } else {
                 html += `<h5>${key}: <span>${value}</span></h5>`;
             }
