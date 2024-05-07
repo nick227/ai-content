@@ -9,6 +9,7 @@ body {
   flex-wrap: wrap;
   justify-content: space-between;
   height: 100%;
+  width: 60%;
 }
 
 h1,
@@ -169,15 +170,17 @@ section.results {
   max-height: 75px;
 }
 
-.toggle-view-btn, .scroll-top {
+.toggle-view-btn,
+.scroll-top {
   padding: 1px 10px;
   cursor: pointer;
   color: gray;
   cursor: pointer;
 }
 
-.toggle-view-btn:hover, .scroll-top:hover {
-    color: black;
+.toggle-view-btn:hover,
+.scroll-top:hover {
+  color: black;
 }
 
 .search-container {
@@ -312,6 +315,7 @@ form button {
   0% {
     opacity: 0;
   }
+
   100% {
     opacity: 1;
   }
@@ -332,11 +336,38 @@ form button {
     background-color: transparent;
     opacity: 0.1;
   }
+
   50% {
     background-color: white;
   }
+
   100% {
     background-color: transparent;
     opacity: 1;
+  }
+}
+
+
+
+@media screen and (max-width: 1600px) {
+  body {
+    width: 100%;
+  }
+}
+
+/* Mobile: up to 767px */
+
+@media screen and (max-width: 850px) {
+  body {
+    width: 100%;
+    padding: 0 1%;
+    margin: 0;
+  }
+  section.form {
+    position: relative;
+    width: 98%;
+  }
+  section.results {
+    width: 98%;
   }
 }
