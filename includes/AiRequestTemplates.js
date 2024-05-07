@@ -18,7 +18,8 @@ class AiRequestTemplates {
             'corporate_art',
             'bauhaus_art',
             'clip_art',
-            'ink_art'
+            'ink_art',
+            'pop_art'
         ]
     }
 
@@ -33,7 +34,9 @@ class AiRequestTemplates {
             'examples',
             'synonyms',
             'how_to',
-             'types'
+             'types',
+             'attributes',
+             'styles'
         ]
     }
 
@@ -45,14 +48,51 @@ class AiRequestTemplates {
             abstract: (subject, word) => `Abstract ${subject} creative ${word} representation, artistic, unique depiction`,
             close_up: (subject, word) => `Close-up, detailed ${subject} ${word}, high-focus, high-resolution 8k, bokeh, centered middle`,
             candid: (subject, word) => `Wide-angle candid photo of real ${subject} ${word}`,
-            web_design: (subject, word) => `Design a professional ui/ux web design for ${subject} ${word}`,
+            web_design: (subject, word) => `Design a professional ui/ux web design mock-up for ${subject} ${word}`,
             schematic: (subject, word) => `Illustrated a clear clean detailed schematic for ${subject} ${word}`,
             photograph: (subject, word) => `Sharp photograph of ${subject} ${word}. Use: good lighting, dof, correct color, good composition`,
             product_photography: (subject, word) => `Product photography shot of ${subject} ${word}, studio-quality`,
             corporate_art: (subject, word) => `Abstract illustration of ${subject} ${word}, corporate-art, minimalist, clean, high-resolution`, 
             bauhaus_art: (subject, word) => `Bauhaus ${subject} ${word} art, atristic illustration, abstract, angular, and geometric`, 
             clip_art: (subject, word) => `Standard clip are of ${subject} ${word}, detailed, nocrop, solid background`, 
-            ink_art: (subject, word) => `Ink sketch of ${subject} ${word}, detailed, nocrop, white background`
+            ink_art: (subject, word) => `Ink sketch of ${subject} ${word}, detailed, nocrop, white background`, 
+            pop_art: (subject, word) => `Pop art style of ${subject} ${word}, detailed, nocrop, studio-quality, creative, colorful, vibrant`,
+        };
+    }
+
+    get styles() {
+        return {
+            message: (subject, word) => `In the context of  ${subject}, generate ${this.aiRequestListLimit} styles of ${word}.`,
+            functionName: "get_styles",
+            properties: (subject, word) => ({
+                "styles": {
+                    "type": "array",
+                    "description": `Array of "${word}" styles`,
+                    "items": {
+                        "type": "string",
+                        "description": `style of "${subject} ${word}"`
+                    }
+                }
+            }),
+            key: 'styles'
+        };
+    }
+
+    get attributes() {
+        return {
+            message: (subject, word) => `Generate an array of ${this.aiRequestListLimit} attributes of ${subject} ${word}.`,
+            functionName: "get_attributes",
+            properties: (subject, word) => ({
+                "attributes": {
+                    "type": "array",
+                    "description": `Array of "${word}" attributes`,
+                    "items": {
+                        "type": "string",
+                        "description": `attribute of "${subject} ${word}"`
+                    }
+                }
+            }),
+            key: 'attributes'
         };
     }
 
@@ -144,15 +184,15 @@ class AiRequestTemplates {
 
     get examples() {
         return {
-            message: (subject, word) => `Generate array of ${this.aiRequestListLimit} well-known examples of  ${subject} ${word}.`,
+            message: (subject, word) => `In the context of  ${subject}, generate ${this.aiRequestListLimit} examples of ${word}s.`,
             functionName: "get_examples",
             properties: (subject, word) => ({
                 "examples": {
                     "type": "array",
-                    "description": `${this.aiRequestListLimit} popular examples of ${subject} ${word}`,
+                    "description": `${this.aiRequestListLimit} popular examples of ${word}`,
                     "items": {
                         "type": "string",
-                        "description": `example of: ${subject} ${word}.`
+                        "description": `example of ${word}`
                     }
                 }
             }),

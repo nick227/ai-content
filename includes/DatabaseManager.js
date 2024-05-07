@@ -44,19 +44,21 @@ class DatabaseManager {
   mergeProperties(existingDoc, newDoc) {
     return Object.keys(newDoc).reduce(
       (mergedDoc, key) => {
-        let oldValue = existingDoc[key];
-        let newValue = newDoc[key];
+        let oldValue = existingDoc[key] ?? [];
+        let newValue = newDoc[key] ?? [];
 
-        // If oldValue or newValue is not an array, make it an array
+        // Ensure both oldValue and newValue are arrays
         if (!Array.isArray(oldValue)) {
-          oldValue = [oldValue];
+          oldValue = oldValue === null ? [] : [oldValue];
         }
         if (!Array.isArray(newValue)) {
-          newValue = [newValue];
+          newValue = newValue === null ? [] : [newValue];
         }
 
-        // Merge arrays by combining unique elements
-        const uniqueSet = new Set([...oldValue, ...newValue]);
+        // Merge arrays by combining unique elements, filter out null
+        const uniqueSet = new Set(
+          [...oldValue, ...newValue].filter((item) => item !== null)
+        );
         mergedDoc[key] = Array.from(uniqueSet);
 
         return mergedDoc;
