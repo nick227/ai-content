@@ -6,6 +6,7 @@ class FormHandler {
       JSON.parse(localStorage.getItem("checkboxes")) || {};
     this.localStorageInputs = JSON.parse(localStorage.getItem("inputs")) || {};
     this.autoCount = 0;
+    this.msgTxt = 'Number of requests:';
   }
 
   init() {
@@ -117,8 +118,8 @@ class FormHandler {
     }
 
     const requests = this.collectData();
-    let msg = `number of ai requests: ${requests.length}`;
-    this.uiComponent.showMessage(msg);
+    //let msg = `${this.msgTxt} ${requests.length}`;
+    //this.uiComponent.showMessage(msg);
 
     if (requests.length > 0) {
       try {
@@ -148,7 +149,7 @@ class FormHandler {
 
             console.log(`inner loop ${i}/${j}`, requests.length);
             await this.makeAiRequest([finalCommand]);
-            msg = `number of ai requests: ${numberOfTotalCommands - commandCounter}`;
+            msg = `${this.msgTxt}: ${numberOfTotalCommands - commandCounter}`;
             this.uiComponent.showMessage(msg);
             await this.delayExecution(2000);
             commandCounter++;
@@ -193,7 +194,7 @@ class FormHandler {
     );
     console.log(` Checking auto-generate limit ${autoGenerate.checked} ${autoGenerateLimit}`);
     if (autoGenerate && autoGenerate.checked) {
-      if (this.autoCount < parseInt(autoGenerateLimit)) {
+      if (this.autoCount <= parseInt(autoGenerateLimit)) {
         console.log(`starting auto generation ${this.autoCount}`);
         this.autoCount++;
         await this.makeRequest();
