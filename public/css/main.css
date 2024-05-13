@@ -124,7 +124,6 @@ section.results {
 
 .wordmap-container {
   width: 90%;
-  min-height: 10vw;
   max-height: 20vw;
   position: relative;
   z-index: 0;
@@ -167,7 +166,7 @@ section.results {
 }
 
 .list-container ul {
-  max-height: 75px;
+  max-height: 185px;
 }
 
 .toggle-view-btn,

@@ -29,49 +29,69 @@ class UiComponent {
     } else {
       const subjectWordPairs = this.getSubjectWordPairs();
       const table = this.createCssTable(subjectWordPairs);
+      //const table = this.createCssTable(this.transformData(subjectWordPairs));
       target.prepend(table);
     }
   }
 
+  transformData(subjectWordListArray) {
+    return subjectWordListArray.map(item => {
+      const listsDetail = item.lists.map(list => `${list.listName} (${list.listItems.length})`).join(", ");
+      return {
+        subject: item.subject,
+        word: item.word,
+        listName: item.listName,
+        lists: listsDetail
+      };
+    });
+  }
+
   createCssTable(subjectWordListArray) {
+    if (!subjectWordListArray.length) return null;
+
+    console.log('subjectWordListArray', subjectWordListArray);
+
     const table = this.createElement("table", { class: "data-table" });
     const thead = this.createElement("thead");
     const headerRow = this.createElement("tr");
-    const headers = ["subject", "word", "lists"].map((text) =>
-      this.createElement("th", { textContent: text })
+
+    // Dynamically create headers from keys of the first object
+    const keys = Object.keys(subjectWordListArray[0]);
+    const headers = keys.map((key) =>
+      this.createElement("th", { textContent: key.charAt(0).toUpperCase() + key.slice(1) })
     );
 
-    headers.forEach((header) => headerRow.appendChild(header));
+    headers.forEach(header => headerRow.appendChild(header));
     thead.appendChild(headerRow);
     table.appendChild(thead);
 
     const tbody = this.createElement("tbody");
-    table.appendChild(tbody);
 
-    // Sort the array by subject
+    // Sort the array by the first key for default sorting
     const sortedArray = subjectWordListArray.sort((a, b) =>
-      a.subject.localeCompare(b.subject)
+      (a[keys[0]] + '').localeCompare(b[keys[0]] + '')
     );
 
-    // Create table rows from the sorted array
-    sortedArray.forEach((item) => tbody.appendChild(this.createRow(item)));
+    // Create table rows from the sorted array using dynamic keys
+    sortedArray.forEach(item => tbody.appendChild(this.createRow(item, keys)));
+    table.appendChild(tbody);
 
     this.setupSorting(headers, tbody);
 
     return table;
   }
 
-  createRow({ subject, word, lists }) {
+  createRow(item, keys) {
     const row = this.createElement("tr");
-    const subjectCell = this.createElement("td", { textContent: subject });
-    const wordCell = this.createElement("td", { textContent: word });
-    const listCountCell = this.createElement("td", {
-      textContent: lists.length.toString(),
+    keys.forEach(key => {
+      const value = item[key];
+      const cellContent = (Array.isArray(value) ? value.length : value).toString();
+      const cell = this.createElement("td", { textContent: cellContent });
+      row.append(cell);
     });
-
-    row.append(subjectCell, wordCell, listCountCell);
     return row;
   }
+
 
   createElement(tag, options = {}, properties = {}) {
     const element = document.createElement(tag);
@@ -227,13 +247,10 @@ class UiComponent {
           .map((result) => {
             const value =
               typeof result === "object" ? JSON.stringify(result) : result;
-            return `<label for="checkbox_${result}_${
-              info.key
-            }"><input class="checkbox_${
-              info.key
-            }" type="checkbox" id="checkbox_${result}_${
-              info.key
-            }" name="checkbox_${result}_${info.key}" value='${value}'>
+            return `<label for="checkbox_${result}_${info.key
+              }"><input class="checkbox_${info.key
+              }" type="checkbox" id="checkbox_${result}_${info.key
+              }" name="checkbox_${result}_${info.key}" value='${value}'>
                             ${result.display || result}
                         </label>`;
           })
@@ -288,8 +305,8 @@ class UiComponent {
       if (key === "image") {
         imagesHtml = Array.isArray(value)
           ? `<div class="images-container">${value
-              .map(createImageElement)
-              .join("")}</div>`
+            .map(createImageElement)
+            .join("")}</div>`
           : createImageElement(value);
         return; // Don't append imagesHtml here
       }
@@ -298,7 +315,9 @@ class UiComponent {
         const content = `<ul>${value
           .map((item) => `<li>${item}</li>`)
           .join("")}</ul>`;
-        html += `<div class="list-container"><label><input name="list_selector_${result._id}_${key}" type="checkbox" data-key="${key}" value="" /><span class="list-title">${key}</span></label>${content}</div>`;
+        html += `<div class="list-container"><label><input name="list_selector_${result._id}_${key}" type="checkbox" data-key="${key}" value="" /> <span class="list-title">${key}</span></label> / 
+        <a href="#" onclick="downloadList(event, '${result.subject}', '${result.word}', '${key}')">download</a>
+        ${content}</div>`;
       } else {
         html += `<h5>${key}: <span>${value}</span></h5>`;
       }
@@ -309,4 +328,22 @@ class UiComponent {
       : "";
     return `<div class="wordmap-container" data-id="${result._id}">${subjectWordHtml}<div class="body">${imagesHtml}${html}</div></div>`;
   }
+}
+
+function downloadList(event, subject, word, listName) {
+  event.preventDefault();
+  const list = event.target.closest('div.list-container').querySelector('ul');
+  const items = Array.from(list.querySelectorAll('li')).map(li => li.textContent).join('\n');
+  const fileName = `${subject}_${word}_${listName}.txt`;
+
+  const element = document.createElement('a');
+  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(items));
+  element.setAttribute('download', fileName);
+
+  element.style.display = 'none';
+  document.body.appendChild(element);
+
+  element.click();
+
+  document.body.removeChild(element);
 }

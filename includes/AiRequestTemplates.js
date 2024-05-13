@@ -7,7 +7,14 @@ class AiRequestTemplates {
         return [
             'professional',
             'creative',
-            'icon',
+            'graffiti',
+            'geometric',
+            'icon_minimal',
+            'icon_mono',
+            'icon_cartoon',
+            'icon_colorful',
+            'icon_8bit',
+            'icon_angle',
             'abstract',
             'close_up',
             'candid',
@@ -16,6 +23,8 @@ class AiRequestTemplates {
             'photograph',
             'product_photography',
             'corporate_art',
+            'pattern',
+            'fashion',
             'bauhaus_art',
             'clip_art',
             'ink_art',
@@ -34,17 +43,38 @@ class AiRequestTemplates {
             'examples',
             'synonyms',
             'how_to',
-             'types',
-             'attributes',
-             'styles'
+            'types',
+            'attributes',
+            'ux_styles',
+            'faq',
+            'books',
+            'websites',
+            'tos',
+            'variations',
+            'market_trends',
+            'legal_regulations',
+            'employee_skills',
+            'competitors',
+            'ux_styles',
+            'todos',
+            'introductions'
         ]
     }
 
     get dalle() {
         return {
+            fashion: (subject, word) => `Glamourous fashion photo of ${subject} "${word}". High-resolution, studio quality, style, dramatic lighting.`,
             professional: (subject, word) => `Professional photo of ${subject} "${word}". High-resolution, studio quality, good lighting.`,
             creative: (subject, word) => `Creative conceptual ${subject} ${word} photograph, artistic composition, unique angle`,
-            icon: (subject, word) => `${subject} ${word} icon, minimal design, nocrop, solid background`,
+            geometric: (subject, word) => `Compose ${subject} ${word} geometric art, artistic creative, symmetrical, geometric art style`,
+            graffiti: (subject, word) => `Detailed quality graffiti art style ${subject} ${word}, hip cool, graffiti style`,
+            pattern: (subject, word) => `Create infinite repeating pattern of ${subject} ${word}, seamless, infinite continuous, repeating pattern`,
+            icon_cartoon: (subject, word) => `Cartoon icon of ${subject} ${word},cartoon style, saturated colors, nocrop, adorable cute`,
+            icon_8bit: (subject, word) => `Pixel art icon of ${subject} ${word}, using classic 8-bit graphics, nocrop, solid background`,
+            icon_minimal: (subject, word) => `Minimal ${subject} ${word} icon, minimal design, nocrop, solid background`,
+            icon_colorful: (subject, word) => `creative colorful ${subject} ${word} icon, nocrop, solid background`,
+            icon_mono: (subject, word) => `Monotone ${subject} ${word} icon, black and white, nocrop, white background`,
+            icon_angle: (subject, word) => `Geometric ${subject} ${word} icon, angles, pattern geometic art, nocrop, centered middle`,
             abstract: (subject, word) => `Abstract ${subject} creative ${word} representation, artistic, unique depiction`,
             close_up: (subject, word) => `Close-up, detailed ${subject} ${word}, high-focus, high-resolution 8k, bokeh, centered middle`,
             candid: (subject, word) => `Wide-angle candid photo of real ${subject} ${word}`,
@@ -60,21 +90,220 @@ class AiRequestTemplates {
         };
     }
 
-    get styles() {
+
+    get faq() {
         return {
-            message: (subject, word) => `In the context of  ${subject}, generate ${this.aiRequestListLimit} styles of ${word}.`,
-            functionName: "get_styles",
+            message: (subject, word) => `Generate ${this.aiRequestListLimit} frequently asked questions about ${subject} ${word}.`,
+            functionName: "get_faq",
             properties: (subject, word) => ({
-                "styles": {
+                "faq": {
                     "type": "array",
-                    "description": `Array of "${word}" styles`,
+                    "description": `Array of frequently asked questions about "${subject} ${word}"`,
+                    "items": {
+                        "type": "string",
+                        "description": `Frequently asked question about "${subject} ${word}"`
+                    }
+                }
+            }),
+            key: 'faq'
+        };
+    }
+
+    get introductions() {
+        return {
+            message: (subject, word) => `Generate array ${this.aiRequestListLimit} various introductions for a ${subject} ${word}.`,
+            functionName: "get_introductions",
+            properties: (subject, word) => ({
+                "introductions": {
+                    "type": "array",
+                    "description": `Array of introductions about "${subject} ${word}"`,
+                    "items": {
+                        "type": "string",
+                        "description": `Introduction about "${subject} ${word}"`
+                    }
+                }
+            }),
+            key: 'introductions'
+        };
+    }
+
+    get todos() {
+        return {
+            message: (subject, word) => `Generate comprehensive list of ${this.aiRequestListLimit} TODO items for ${subject} ${word}.`,
+            functionName: "get_todo",
+            properties: (subject, word) => ({
+                "todos": {
+                    "type": "array",
+                    "description": `Array of detailed TODO steps for "${subject} ${word}"`,
+                    "items": {
+                        "type": "string",
+                        "description": `TODO item for: "${subject} ${word}"`
+                    }
+                }
+            }),
+            key: 'todos'
+        };
+    }
+
+    get books() {
+        return {
+            message: (subject, word) => `Identify ${this.aiRequestListLimit} books about ${subject} ${word}.`,
+            functionName: "get_books",
+            properties: (subject, word) => ({
+                "books": {
+                    "type": "array",
+                    "description": `Array of books about "${subject} ${word}"`,
+                    "items": {
+                        "type": "string",
+                        "description": `Book about "${subject} ${word}"`
+                    }
+                }
+            }),
+            key: 'books'
+        };
+    }
+
+    get websites() {
+        return {
+            message: (subject, word) => `List ${this.aiRequestListLimit} websites about ${subject} ${word}.`,
+            functionName: "get_websites",
+            properties: (subject, word) => ({
+                "websites": {
+                    "type": "array",
+                    "description": `Array of websites about "${subject} ${word}"`,
+                    "items": {
+                        "type": "string",
+                        "description": `Website about "${subject} ${word}"`
+                    }
+                }
+            }),
+            key: 'websites'
+        };
+    }
+
+    get tos() {
+        return {
+            message: (subject, word) => `Generate ${this.aiRequestListLimit} terms of service for ${subject} ${word}.`,
+            functionName: "get_tos",
+            properties: (subject, word) => ({
+                "tos": {
+                    "type": "array",
+                    "description": `Array of terms of service for "${subject} ${word}"`,
+                    "items": {
+                        "type": "string",
+                        "description": `Term of service for "${subject} ${word}"`
+                    }
+                }
+            }),
+            key: 'tos'
+        };
+    }
+
+    get variations() {
+        return {
+            message: (subject, word) => `Generate ${this.aiRequestListLimit} variations of ${subject} ${word}.`,
+            functionName: "get_variations",
+            properties: (subject, word) => ({
+                "variations": {
+                    "type": "array",
+                    "description": `Array of variations of "${subject} ${word}"`,
+                    "items": {
+                        "type": "string",
+                        "description": `Variation of "${subject} ${word}"`
+                    }
+                }
+            }),
+            key: 'variations'
+        };
+    }
+
+    get market_trends() {
+        return {
+            message: (subject, word) => `In the context of  ${subject}, generate ${this.aiRequestListLimit} market trends of ${word}.`,
+            functionName: "get_market_trends",
+            properties: (subject, word) => ({
+                "market_trends": {
+                    "type": "array",
+                    "description": `Array of "${word}" market trends`,
+                    "items": {
+                        "type": "string",
+                        "description": `market trend of "${subject} ${word}"`
+                    }
+                }
+            }),
+            key: 'market_trends'
+        };
+    }
+
+    get legal_regulations() {
+        return {
+            message: (subject, word) => `Generate array of ${this.aiRequestListLimit} legal regulations of ${subject} ${word}.`,
+            functionName: "get_legal_regulations",
+            properties: (subject, word) => ({
+                "legal_regulations": {
+                    "type": "array",
+                    "description": `Array of "${word}" legal regulations`,
+                    "items": {
+                        "type": "string",
+                        "description": `legal regulation of "${subject} ${word}"`
+                    }
+                }
+            }),
+            key:  'legal_regulations'
+        };
+    }
+
+    get employee_skills() {
+        return {
+            message: (subject, word) => `Generate array of ${this.aiRequestListLimit} employee skills of ${subject} ${word}.`,
+            functionName: "get_employee_skills",
+            properties: (subject, word) => ({
+                "employee_skills": {
+                    "type": "array",
+                    "description": `Array of "${word}" employee skills`,
+                    "items": {
+                        "type": "string",
+                        "description": `employee skill of "${subject} ${word}"`
+                    }
+                }
+            }),
+            key:  'employee_skills'
+        };
+    }
+
+    get competitors() {
+        return {
+            message: (subject, word) => `Generate array of ${this.aiRequestListLimit} competitors of ${subject} ${word}.`,
+            functionName: "get_competitors",
+            properties: (subject, word) => ({
+                "competitors": {
+                    "type": "array",
+                    "description": `Array of "${word}" competitors`,
+                    "items": {
+                        "type": "string",
+                        "description": `competitor of "${subject} ${word}"`
+                    }
+                }
+            }),
+            key:  'competitors'
+        };
+    }
+
+    get ux_styles() {
+        return {
+            message: (subject, word) => `Generate array of ${this.aiRequestListLimit} ui/ux styles of ${subject} ${word}.`,
+            functionName: "get_ux_styles",
+            properties: (subject, word) => ({
+                "ux_styles": {
+                    "type": "array",
+                    "description": `Array of "${word}" ui/ux styles`,
                     "items": {
                         "type": "string",
                         "description": `style of "${subject} ${word}"`
                     }
                 }
             }),
-            key: 'styles'
+            key: 'ux_styles'
         };
     }
 
@@ -98,7 +327,7 @@ class AiRequestTemplates {
 
     get types() {
         return {
-            message: (subject, word) => `Generate an array of ${this.aiRequestListLimit} types of ${subject} ${word}. For example types of "singers" could be wedding sings, opera singer, etc.`,
+            message: (subject, word) => `Generate an array of ${this.aiRequestListLimit} types of ${subject} ${word}.`,
             functionName: "get_types",
             properties: (subject, word) => ({
                 "types": {
@@ -148,15 +377,15 @@ class AiRequestTemplates {
 
     get businesses_ideas() {
         return {
-            message: (subject, word) => `Generate an array of ${this.aiRequestListLimit} businesses for ${subject} ${word}.`,
+            message: (subject, word) => `Generate an array of ${this.aiRequestListLimit} business ideas for ${subject} ${word}.`,
             functionName: "get_businesses_ideas",
             properties: (subject, word) => ({
                 "businesses_ideas": {
                     "type": "array",
-                    "description": `Array of businesses related to: ${subject} ${word}`,
+                    "description": `Array of business ideas related to: ${subject} ${word}`,
                     "items": {
                         "type": "string",
-                        "description": `business related to: ${subject}.`
+                        "description": `business idea related to: ${subject} ${word}`
                     }
                 }
             }),
@@ -166,7 +395,7 @@ class AiRequestTemplates {
 
     get related_words() {
         return {
-            message: (subject) => `Create array of ${this.aiRequestListLimit} unique words related to "${subject}". `,
+            message: (subject) => `In the context of  ${subject}, create array of ${this.aiRequestListLimit} unique words related to "${word}". `,
             functionName: "get_related_words",
             properties: (subject) => ({
                 "related_words": {
@@ -174,7 +403,7 @@ class AiRequestTemplates {
                     "description": `Array of words related to: ${subject}`,
                     "items": {
                         "type": "string",
-                        "description": `word related to: ${subject}.`
+                        "description": `word related to: ${subject}  ${word}`
                     }
                 }
             }),
@@ -192,7 +421,7 @@ class AiRequestTemplates {
                     "description": `${this.aiRequestListLimit} popular examples of ${word}`,
                     "items": {
                         "type": "string",
-                        "description": `example of ${word}`
+                        "description": `example of ${subject} ${word}`
                     }
                 }
             }),
@@ -202,7 +431,7 @@ class AiRequestTemplates {
 
     get synonyms() {
         return {
-            message: (word) => `Create array of ${this.aiRequestListLimit} synonyms for: ${word}.`,
+            message: (word) => `In the context of  ${subject}, generate array of ${this.aiRequestListLimit} synonyms for: ${word}.`,
             functionName: "get_synonyms",
             properties: (word) => ({
                 "synonyms": {
